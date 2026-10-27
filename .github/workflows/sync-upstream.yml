@@ -1,18 +1,24 @@
 name: Sync Upstream
 on:
   schedule:
-    - cron: '0 8 * * *' # UTC 8点 = 北京时间16点
+    - cron: '0 8 * * *' # UTC时间 8点 = 北京时间16点
   workflow_dispatch: # 支持手动点击运行
 jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      - name: Sync upstream
-        uses: aormsby/Fork-Sync-With-Upstream-action@v3.4
+      - name: Checkout code
+        uses: actions/checkout@v4
         with:
-          upstream_repository: huangxd-/danmu_api
-          target_branch: main
-          upstream_branch: main
-          sync_tags: false
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+          ref: main
+          persist-credentials: true
 
+      - name: Sync with upstream
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git remote add upstream https://github.com/huangxd-/danmu_api.git
+          git fetch upstream
+          git merge upstream/main --no-edit
+          git push origin main
