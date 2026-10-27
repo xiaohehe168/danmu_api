@@ -1,0 +1,17 @@
+name: Sync Upstream
+on:
+  schedule:
+    - cron: '0 8 * * *' # 每天北京时间16点自动同步一次上游，可以自行改
+  workflow_dispatch: # 支持手动点按钮立即同步
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sync upstream
+        uses: aormsby/Fork-Sync-With-Upstream-action@v3
+        with:
+          upstream_repository: huangxd-/danmu_api
+          target_branch: main
+          upstream_branch: main
+          sync_tags: false
+          github_token: ${{ secrets.GITHUB_TOKEN }}
